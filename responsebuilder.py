@@ -421,56 +421,90 @@ def turnLights1On(shelveDict):
     print("Colored Lights On Response")
     a1 = functools.partial(GPIO.output, 14, GPIO.HIGH)
     respo = Response(["first", "lights", "on"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    respo2 = Response(["first", "light", "on"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
     
     print("\nAdd to the shelve dictionary")
     responseBuilder = ResponseBuilder(shelveDict)
     responseBuilder.addResponse(respo)
+    responseBuilder.addResponse(respo2)
     responseBuilder.flushResponse()
     
 def turnLights1Off(shelveDict):
     print("Colored Lights Off Response")
     a1 = functools.partial(GPIO.output, 14, GPIO.LOW)
     respo = Response(["first", "lights", "off"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    respo2 = Response(["first", "light", "off"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
     
     print("\nAdd to the shelve dictionary")
     responseBuilder = ResponseBuilder(shelveDict)
     responseBuilder.addResponse(respo)
+    responseBuilder.addResponse(respo2)
     responseBuilder.flushResponse()
 
 def turnLights2On(shelveDict):
     print("Light Bulb On Response")
     a1 = functools.partial(GPIO.output, 15, GPIO.HIGH)
     respo = Response(["second", "lights", "on"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    respo2 = Response(["second", "light", "on"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
     
     print("\nAdd to the shelve dictionary")
     responseBuilder = ResponseBuilder(shelveDict)
     responseBuilder.addResponse(respo)
+    responseBuilder.addResponse(respo2)
     responseBuilder.flushResponse()
     
 def turnLights2Off(shelveDict):
     print("Light Bulb Off Response")
     a1 = functools.partial(GPIO.output, 15, GPIO.LOW)
     respo = Response(["second", "lights", "off"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    respo2 = Response(["second", "light", "off"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
     
     print("\nAdd to the shelve dictionary")
     responseBuilder = ResponseBuilder(shelveDict)
     responseBuilder.addResponse(respo)
+    responseBuilder.addResponse(respo2)
     responseBuilder.flushResponse()
     
 def turnOutletOn(shelveDict):
     print("Outlet On Response")
     a1 = functools.partial(GPIO.output, 18, GPIO.HIGH)
     respo = Response(["outlet", "on"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    respo2 = Response(["outlets", "on"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
     
     print("\nAdd to the shelve dictionary")
     responseBuilder = ResponseBuilder(shelveDict)
     responseBuilder.addResponse(respo)
+    responseBuilder.addResponse(respo2)
     responseBuilder.flushResponse()
     
 def turnOutletOff(shelveDict):
     print("Outlet Off Response")
     a1 = functools.partial(GPIO.output, 18, GPIO.LOW)
     respo = Response(["outlet", "off"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    respo2 = Response(["outlets", "off"], [a1], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    
+    print("\nAdd to the shelve dictionary")
+    responseBuilder = ResponseBuilder(shelveDict)
+    responseBuilder.addResponse(respo)
+    responseBuilder.addResponse(respo2)
+    responseBuilder.flushResponse()
+
+def turnAllLightsOn(shelveDict):
+    print("All Lights On Response")
+    a1 = functools.partial(GPIO.output, 14, GPIO.HIGH)
+    a2 = functools.partial(GPIO.output, 15, GPIO.HIGH)
+    respo = Response(["lights", "on"], [a1, a2], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    
+    print("\nAdd to the shelve dictionary")
+    responseBuilder = ResponseBuilder(shelveDict)
+    responseBuilder.addResponse(respo)
+    responseBuilder.flushResponse()
+    
+def turnAllLightsOff(shelveDict):
+    print("All Lights On Response")
+    a1 = functools.partial(GPIO.output, 14, GPIO.LOW)
+    a2 = functools.partial(GPIO.output, 15, GPIO.LOW)
+    respo = Response(["lights", "off"], [a1, a2], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
     
     print("\nAdd to the shelve dictionary")
     responseBuilder = ResponseBuilder(shelveDict)
@@ -548,7 +582,7 @@ def shutdownResponse(shelveDict):
     responseBuilder.addResponse(shutdownSystemResponse)
     responseBuilder.addResponse(shutdownSystemResponse2)
     responseBuilder.flushResponse()
-    
+
 #For Testing/Building the Responses
 if __name__ == "__main__":
     """
@@ -593,6 +627,8 @@ if __name__ == "__main__":
     turnLights2Off(shelveDict)
     turnOutletOn(shelveDict)
     turnOutletOff(shelveDict)
+    turnAllLightsOn(shelveDict)
+    turnAllLightsOff(shelveDict)
     
     #~ 220 Volt Appliances Responses
     playMedia(shelveDict)

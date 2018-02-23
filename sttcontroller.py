@@ -142,13 +142,13 @@ def process_event(d, lock, li, consoleLogLi, assistantContext, event, shelveDict
     print(event)
     
     if event.type == EventType.ON_MUTED_CHANGED: consoleLogLi.append("Waiting for hotword...")
-    if event.type == EventType.ON_CONVERSATION_TURN_STARTED:
+    elif event.type == EventType.ON_CONVERSATION_TURN_STARTED:
         consoleLogLi.append("ON_CONVERSATION_TURN_STARTED: Speak now...")
         MediaPlayer.playURL(d, "/home/pi/Documents/VoiceAssistant/sounds/hotword-beep.mp3")
         if d["incomingCall"] != 1 and d["ongoingCall"] == 1:
             assistantContext.stop_conversation()
             d["endlinphonecall"] = 1
-    if event.type == EventType.ON_RECOGNIZING_SPEECH_FINISHED:
+    elif event.type == EventType.ON_RECOGNIZING_SPEECH_FINISHED:
         text = event.args['text']
         shelveDict["previousText"] = text
         print("text: " + text)
@@ -176,12 +176,12 @@ def process_event(d, lock, li, consoleLogLi, assistantContext, event, shelveDict
                     response.executeActions(d, lock)
             for filteredWord in filteredWordList:
                 li.append(filteredWord)
-    if event.type == EventType.ON_ASSISTANT_ERROR:
+    elif event.type == EventType.ON_ASSISTANT_ERROR:
         print("ON_ASSISTANT_ERROR")
         print("event type: " + str(type(event.args['is_fatal'])))
         #~ consoleLogLi.append("ON_ASSISTANT_ERROR")
         #~ consoleLogLi.append("event type: " + str(type(event.args['is_fatal'])))
-    if event.type == EventType.ON_CONVERSATION_TURN_FINISHED: consoleLogLi.append("Waiting for hotword...")
+    elif event.type == EventType.ON_CONVERSATION_TURN_FINISHED: consoleLogLi.append("Waiting for hotword...")
         
 def main(offline=0, shelveDict=None):
     
@@ -342,20 +342,23 @@ def main(offline=0, shelveDict=None):
     with open("google-assistant.dic", "r") as f:
         dicStrArr = f.readlines()
         
-    def initLinphone(d):
-        currentAccount = UserSettings.objects.filter(name="current")
-        if len(currentAccount) == 0:
-            currentAccount = UserSettings(name="current")
-            currentAccount.save()
-        else:
-            currentAccount = currentAccount[0]
+    def initLinphone(d, lock):
+        if lock.acquire():
+            if not connection.in_atomic_block: connection.close()
+            currentAccount = UserSettings.objects.filter(name="current")
+            if len(currentAccount) == 0:
+                currentAccount = UserSettings(name="current")
+                currentAccount.save()
+            else:
+                currentAccount = currentAccount[0]
+            lock.release()
         linphoneBase = LinphoneBase(dictProxy=d, username=str(currentAccount.linphone_sip_acct), password=str(currentAccount.linphone_sip_pwd), whitelist=['sip:markytools@sip.linphone.org', 'sip:markaty@sip.linphone.org', 'sip:slylilytestacct@sip.linphone.org'], camera='', snd_capture='ALSA: default device', snd_playback='ALSA: default device')
         linphoneBase.setup()
         linphoneBase.run()
     
     def initHotwordDetection(d, consoleLogLi):
         while True:
-            if d["lastHotwordTime"] != -1 and d["lastHotwordTime"] != -2 and int(round(time.time())) - d["lastHotwordTime"] >= 8:
+            if d["lastHotwordTime"] != -1 and d["lastHotwordTime"] != -2 and int(round(time.time())) - d["lastHotwordTime"] >= 10:
                 consoleLogLi.append("WAITING FOR RESPONSE KILLED")
                 print("WAITING FOR RESPONSE KILLED")
                 #~ consoleLogLi.append("WAITING FOR RESPONSE KILLED")
@@ -390,7 +393,11 @@ def main(offline=0, shelveDict=None):
     d["stopmedia"] = 0
     d["pausemedia"] = 0
     d["changevolume"] = 0
-    d["volumemedia"] = int(UserSettings.objects.get(name="current").volume)
+    if lock.acquire():
+        if not connection.in_atomic_block: connection.close()
+        d["volumemedia"] = int(UserSettings.objects.get(name="current").volume)
+        #~ d["volumemedia"] = 10
+        lock.release()
     d["lastHotwordTime"] = -1
     d["playloop"] = 0
     d["loopURL"] = None
@@ -404,7 +411,7 @@ def main(offline=0, shelveDict=None):
     p7 = Process(target=MediaPlayer.stopPlaying, args=(d, lock,))
     p11 = Process(target=MediaPlayer.playLoopContinuously, args=(d,))
     #~ Temporarily disable linphone
-    p8 = Process(target=initLinphone, args=(d,))
+    p8 = Process(target=initLinphone, args=(d, lock,))
     p10 = Process(target=initHotwordDetection, args=(d, consoleLogLi,))
     p12 = Process(target=pushMessagesProcess, args=(d, lock, consoleLogLi,))
     p13 = Process(target=MediaPlayer.changeVolumeProcess, args=(d, lock,))
