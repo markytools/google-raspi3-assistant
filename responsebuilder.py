@@ -510,6 +510,30 @@ def turnAllLightsOff(shelveDict):
     responseBuilder = ResponseBuilder(shelveDict)
     responseBuilder.addResponse(respo)
     responseBuilder.flushResponse()
+    
+def turnAllLoadsOn(shelveDict):
+    print("All Loads On Response")
+    a1 = functools.partial(GPIO.output, 14, GPIO.HIGH)
+    a2 = functools.partial(GPIO.output, 15, GPIO.HIGH)
+    a3 = functools.partial(GPIO.output, 18, GPIO.HIGH)
+    respo = Response(["loads", "on"], [a1, a2, a3], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    
+    print("\nAdd to the shelve dictionary")
+    responseBuilder = ResponseBuilder(shelveDict)
+    responseBuilder.addResponse(respo)
+    responseBuilder.flushResponse()
+    
+def turnAllLoadsOff(shelveDict):
+    print("All Loads Off Response")
+    a1 = functools.partial(GPIO.output, 14, GPIO.LOW)
+    a2 = functools.partial(GPIO.output, 15, GPIO.LOW)
+    a3 = functools.partial(GPIO.output, 18, GPIO.LOW)
+    respo = Response(["loads", "off"], [a1, a2, a3], ResponseSwitch.OFFLINE_ONLY, ResponseType.NORMAL)
+    
+    print("\nAdd to the shelve dictionary")
+    responseBuilder = ResponseBuilder(shelveDict)
+    responseBuilder.addResponse(respo)
+    responseBuilder.flushResponse()
 
 def playMedia(shelveDict):
     print("Play Audio Single / Playlist Shuffle Response")
@@ -595,9 +619,9 @@ if __name__ == "__main__":
     specialVars["playlistName"] -- stores the playlist created upon startup
     """
     
-    os.system("sudo rm scripts.d")
+    os.system("sudo rm scripts.d")  #Deletes the script.d file
     
-    shelveDict = shelve.open("scripts.d")
+    shelveDict = shelve.open("scripts.d")   #Creates a new script.d file or opens the file if it exists
     testResponse(shelveDict)
     testResponse2(shelveDict)
     testResponse3(shelveDict)
@@ -629,6 +653,8 @@ if __name__ == "__main__":
     turnOutletOff(shelveDict)
     turnAllLightsOn(shelveDict)
     turnAllLightsOff(shelveDict)
+    turnAllLoadsOn(shelveDict)
+    turnAllLoadsOff(shelveDict)
     
     #~ 220 Volt Appliances Responses
     playMedia(shelveDict)
