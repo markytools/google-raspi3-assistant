@@ -161,7 +161,7 @@ def runLinphoneBase(d, linphoneQueue, linphoneBase):
     linphoneBase.run()
     
 #~ def runLinphoneBase():
-    #~ linphoneBase = LinphoneBase(username='markytools', password='boaconstrictor12', whitelist=['sip:markytools@sip.linphone.org', 'sip:markaty@sip.linphone.org', 'sip:slylilytestacct@sip.linphone.org'], camera='', snd_capture='ALSA: default device', snd_playback='ALSA: default device')
+    #~ linphoneBase = LinphoneBase(username='markytools', password='password', whitelist=['sip:markytools@sip.linphone.org', 'sip:markaty@sip.linphone.org', 'sip:slylilytestacct@sip.linphone.org'], camera='', snd_capture='ALSA: default device', snd_playback='ALSA: default device')
     #~ linphoneBase.run()
 
 if __name__ == '__main__':

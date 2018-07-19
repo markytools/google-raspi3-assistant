@@ -1,0 +1,4 @@
+morning
+hello
+father
+mother

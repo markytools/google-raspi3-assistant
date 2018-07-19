@@ -1,0 +1,7 @@
+/home/pi/Documents/VoiceAssistant/responsebuilder.py:26: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
+  GPIO.setup(14, GPIO.OUT)    #Colored Bulbs
+/home/pi/Documents/VoiceAssistant/responsebuilder.py:27: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
+  GPIO.setup(15, GPIO.OUT)    #Large Bulb
+usage: voice_assistant.py [-h] [--credentials OAUTH2_CREDENTIALS_FILE]
+voice_assistant.py: error: argument --credentials: No such file or directory: "/root/.config/google-oauthlib-tool/credentials.json"
+Program restarted main module

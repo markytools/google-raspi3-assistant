@@ -74,6 +74,7 @@ def stopPlaying(d, lock):
 def changeVolumeProcess(d, lock):
     while True:
         if d["changevolume"] == 1:
+            if lock.acquire():
                 if not connection.in_atomic_block: connection.close()
                 d["changevolume"] = 0
                 dbusSendCommand = 'dbus-send --print-reply --session --reply-timeout=500 --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Set string:"org.mpris.MediaPlayer2.Player" string:"Volume" double:' + str(int(d["volumemedia"]) / 10.0)
@@ -81,6 +82,7 @@ def changeVolumeProcess(d, lock):
                 currentUser = UserSettings.objects.get(name="current")
                 currentUser.volume = d["volumemedia"]
                 currentUser.save()
+                lock.release()
             
 def playAnother(url):
     stopPlaying()

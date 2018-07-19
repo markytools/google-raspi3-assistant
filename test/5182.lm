@@ -1,0 +1,56 @@
+Language model created by QuickLM on Sat Oct 28 08:56:55 EDT 2017
+Copyright (c) 1996-2010 Carnegie Mellon University and Alexander I. Rudnicky
+
+The model is in standard ARPA format, designed by Doug Paul while he was at MITRE.
+
+The code that was used to produce this language model is available in Open Source.
+Please visit http://www.speech.cs.cmu.edu/tools/ for more information
+
+The (fixed) discount mass is 0.5. The backoffs are computed using the ratio method.
+This model based on a corpus of 4 sentences and 11 words
+
+\data\
+ngram 1=11
+ngram 2=13
+ngram 3=9
+
+\1-grams:
+-0.9294 </s> -0.3010
+-0.9294 <s> -0.2467
+-1.5315 AFTERNOON -0.2467
+-1.5315 AND -0.2881
+-1.5315 ARE -0.2881
+-1.5315 GLAMOROUS -0.2467
+-1.5315 GOOD -0.2881
+-1.5315 HELLO -0.2881
+-1.5315 HI -0.2467
+-1.5315 MORNING -0.2467
+-1.5315 YOU -0.2881
+
+\2-grams:
+-0.9031 <s> AFTERNOON 0.0000
+-0.9031 <s> GOOD 0.0000
+-0.9031 <s> HELLO 0.0000
+-0.9031 <s> YOU 0.0000
+-0.3010 AFTERNOON </s> -0.3010
+-0.3010 AND HI 0.0000
+-0.3010 ARE GLAMOROUS 0.0000
+-0.3010 GLAMOROUS </s> -0.3010
+-0.3010 GOOD MORNING 0.0000
+-0.3010 HELLO AND 0.0000
+-0.3010 HI </s> -0.3010
+-0.3010 MORNING </s> -0.3010
+-0.3010 YOU ARE 0.0000
+
+\3-grams:
+-0.3010 <s> AFTERNOON </s>
+-0.3010 <s> GOOD MORNING
+-0.3010 <s> HELLO AND
+-0.3010 <s> YOU ARE
+-0.3010 AND HI </s>
+-0.3010 ARE GLAMOROUS </s>
+-0.3010 GOOD MORNING </s>
+-0.3010 HELLO AND HI
+-0.3010 YOU ARE GLAMOROUS
+
+\end\

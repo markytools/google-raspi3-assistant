@@ -1,0 +1,179 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+# Copyright (C) 2017 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+from __future__ import print_function
+from os import environ, path
+from multiprocessing import Process
+
+MODELDIR = "pocketsphinx/model"
+DATADIR = "pocketsphinx/model"
+
+import argparse
+import os.path
+import json
+import sys
+import signal
+
+import pyaudio
+import google.oauth2.credentials
+
+from pocketsphinx import *
+from sphinxbase import *
+from google.assistant.library import Assistant
+from google.assistant.library.event import EventType
+from google.assistant.library.file_helpers import existing_file
+
+
+
+count = 0
+
+def process_event(event):
+    """Pretty prints events.
+
+    Prints all events that occur with two spaces between each new
+    conversation and a single space between turns of a conversation.
+
+    Args:
+        event(event.Event): The current event to process.
+    """
+    global count
+    
+    if event.type == EventType.ON_CONVERSATION_TURN_STARTED:
+        print()
+        count += 1
+    
+    if event.type == EventType.ON_ASSISTANT_ERROR:
+        print("Assistant Error Detected, Fatal: " + str(event.args['is_fatal']))
+        
+    if event.type == EventType.ON_RECOGNIZING_SPEECH_FINISHED:
+        print("Last Speech: " + event.args['text'])
+
+    print(event)
+
+    if (event.type == EventType.ON_CONVERSATION_TURN_FINISHED and
+            event.args and not event.args['with_follow_on_turn']):
+        print()
+
+
+def restartAssistant(assistantContext, credentials):
+    with Assistant(credentials) as assistantContext:
+        events = assistantContext.start()
+        for event in events:
+            process_event(event)
+            if (count == 2):
+                print(count)
+                assistantContext.stop_conversation()
+                assistantContext.set_mic_mute(True)
+                break;
+    return assistantContext
+
+def main(offline=0):
+ 
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('--credentials', type=existing_file, metavar='OAUTH2_CREDENTIALS_FILE', default=os.path.join(os.path.expanduser('~/.config'),
+                            'google-oauthlib-tool', 'credentials.json'), help='Path to store and read OAuth2 credentials')
+    args = parser.parse_args()
+    with open(args.credentials, 'r') as f: credentials = google.oauth2.credentials.Credentials(token=None, **json.load(f))
+    
+    
+    
+    config = Decoder.default_config()
+    config.set_string('-hmm', path.join(DATADIR, 'en-us/en-us'))
+    config.set_string('-lm', path.join(MODELDIR, 'en-us/7267.lm'))
+    config.set_string('-dict', path.join(MODELDIR, 'en-us/7267.dic'))
+    decoder = Decoder(config)
+
+    
+    assistantContext = 0
+        
+    def pocketsphinxThread():
+        #~ global count
+        #~ 
+        #~ while (count != -1):
+            #~ print("Count: " + str(count))
+            #~ pass
+        print("pocketsphinx thread")
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+        
+        stream.start_stream()
+
+        in_speech_bf = False
+        decoder.start_utt()
+        while True:
+            buf = stream.read(1024, exception_on_overflow = False)
+            if buf:
+                decoder.process_raw(buf, False, False)
+                if decoder.get_in_speech() != in_speech_bf:
+                    in_speech_bf = decoder.get_in_speech()
+                    if not in_speech_bf:
+                        decoder.end_utt()
+                        print('Result:', decoder.hyp().hypstr)
+                        decoder.start_utt()
+            else:
+                break
+        stream.close()
+        decoder.end_utt()
+        p.terminate()
+        
+        
+    def googleAssistantThread():
+        
+        print("googleAssistant thread")
+        retryProgramOnce = 1
+        def sig_handler(signum, frame): 
+            # Create a decoder with certain model
+            assistantContext.stop_conversation()
+            print("Segmentation Fault Signal")
+            #~ pocketsphinxThread()
+                
+        signal.signal(signal.SIGSEGV, sig_handler)
+        
+        with Assistant(credentials) as assistantContext:
+            global count
+            events = assistantContext.start()
+            for event in events:
+                process_event(event)
+                if (count == 2):
+                    assistantContext.stop_conversation()
+                    assistantContext.set_mic_mute(True)
+                    count = -1
+                    break;
+            
+            pocketsphinxThread()
+        
+        
+        #~ pocketsphinxThread()
+        
+
+    def runInParallel(*fns):
+        proc = []
+        for fn in fns:
+            p = Process(target=fn)
+            p.start()
+            proc.append(p)
+        for p in proc:
+            p.join()
+    
+    #~ runInParallel(googleAssistantThread, pocketsphinxThread)
+    
+    #~ googleAssistantThread()
+
+
+if __name__ == '__main__':
+    main()
