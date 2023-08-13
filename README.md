@@ -22,7 +22,6 @@
 <li>Power Supply and 12V Relay to control the 220V Lights (optional)</li>
 </ul>
 <p>The web server that can be used to control the states of the Voice Assistant can be found here:&nbsp;https://github.com/markytools/google-raspi3-assistant-controller</p>
+<p>Thesis Manuscript: https://drive.google.com/file/d/1uSaQwQCHr8RYoa4PxWUvgPmgqQDpLqgv/view?usp=sharing</p>
 <p>&nbsp;</p>
 <p style="text-align: center;">&nbsp;</p>
-<br/>
-<p>Thesis Manuscript: https://drive.google.com/file/d/1uSaQwQCHr8RYoa4PxWUvgPmgqQDpLqgv/view?usp=sharing</p>
