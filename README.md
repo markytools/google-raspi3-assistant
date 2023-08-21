@@ -1,6 +1,6 @@
 <p><strong><img src="https://raw.githubusercontent.com/markytools/google-raspi3-assistant/master/other/google-assistant-raspi.jpg" alt="" width="864" height="576" /></strong></p>
 <p><strong>A Personal Assistant using the Raspberry Pi integrated with Google Technology</strong></p>
-<p>Thesis Manuscript: https://drive.google.com/file/d/1uSaQwQCHr8RYoa4PxWUvgPmgqQDpLqgv/view?usp=sharing</p>
+<p>Thesis Manuscript: https://drive.google.com/file/d/1SJxpbhFCccfUyitmaYXdobPkYBeuy2Q0/view?usp=sharing</p>
 <p><u></u>For this project, we will be turning the Raspberry Pi into a Personal Assistant by integrating the Google Technology. The Assistant is going to have a variety of features such as answering general questions, turning the lights on/off, executing VoIP (Voice-over-Internet) calls, and playing music.</p>
 <p>A personal assistant allows you to achieve specific tasks that you normally would want to be automated. An Intelligent Personal Assistant is &ldquo;a software that has been designed to assist people with basic tasks, usually providing information using natural language.&rdquo;</p>
 <p>Here, a personal voice assistant will be created by integrating the Google Assistant into the Raspberry Pi. The Assistant mainly uses a series of voice commands to activate its set of designated instructions.</p>
